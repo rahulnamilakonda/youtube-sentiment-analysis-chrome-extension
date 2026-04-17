@@ -21,8 +21,8 @@ sentitube-extension/
 ![Tab 1 Labeling](images/label_1.PNG)
 
 ### Tab 2 — Video Analysis
-![Tab 2 Analysis 1](images/analyses_1.PNG)
-![Tab 2 Analysis 2](images/analyses_2.PNG)
+![Tab 2 Analysis 1](images/analysis_1.PNG)
+![Tab 2 Analysis 2](images/analysis_2.PNG)
 
 ---
 
