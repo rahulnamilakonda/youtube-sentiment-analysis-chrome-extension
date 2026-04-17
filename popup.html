@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>SentiTube</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #111;
+            --surface: #1c1c1e;
+            --border: #2a2a2a;
+            --text: #f0f0f0;
+            --muted: #777;
+            --red: #ff0000;
+            --red2: #cc0000;
+            --green: #4ade80;
+            --yellow: #facc15;
+            --rose: #f87171;
+            --blue: #60a5fa;
+        }
+
+        body {
+            width: 340px;
+            font-family: 'Space Grotesk', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        /* ── Header ── */
+        .hdr {
+            background: var(--red);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .hdr-icon {
+            width: 22px;
+            height: 22px;
+            background: #fff;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .hdr-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .hdr-sub {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+        }
+
+        /* ── Tabs ── */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 9px 0;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            color: var(--muted);
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            border-bottom: 2px solid transparent;
+            transition: color 0.15s, border-color 0.15s;
+        }
+
+        .tab.active {
+            color: var(--red);
+            border-bottom-color: var(--red);
+        }
+
+        /* ── Panels ── */
+        .panel {
+            display: none;
+            padding: 14px;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        /* ── Page status ── */
+        .page-status {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 7px 10px;
+            margin-bottom: 11px;
+            font-size: 11px;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .status-dot.green {
+            background: var(--green);
+        }
+
+        .status-dot.red {
+            background: var(--rose);
+        }
+
+        .status-dot.yellow {
+            background: var(--yellow);
+        }
+
+        /* ── Buttons ── */
+        .btn {
+            width: 100%;
+            border: none;
+            border-radius: 7px;
+            padding: 9px 0;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            transition: opacity 0.15s, transform 0.1s;
+        }
+
+        .btn:active {
+            transform: scale(0.97);
+        }
+
+        .btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        .btn-red {
+            background: var(--red);
+            color: #fff;
+            margin-bottom: 7px;
+        }
+
+        .btn-red:hover:not(:disabled) {
+            background: var(--red2);
+        }
+
+        .btn-ghost {
+            background: var(--surface);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover:not(:disabled) {
+            color: var(--rose);
+            border-color: #441111;
+            background: #1f1515;
+        }
+
+        /* ── Stat grid ── */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 7px;
+            margin-top: 12px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        .stat-num {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .stat-lbl {
+            font-size: 9px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .pos .stat-num {
+            color: var(--green);
+        }
+
+        .pos .stat-lbl {
+            color: #166534;
+        }
+
+        .neg .stat-num {
+            color: var(--rose);
+        }
+
+        .neg .stat-lbl {
+            color: #991b1b;
+        }
+
+        .neu .stat-num {
+            color: var(--yellow);
+        }
+
+        .neu .stat-lbl {
+            color: #854d0e;
+        }
+
+        /* ── Legend ── */
+        .legend {
+            margin-top: 13px;
+            padding-top: 11px;
+            border-top: 1px solid var(--border);
+        }
+
+        .legend-title {
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--muted);
+            margin-bottom: 7px;
+        }
+
+        .legend-row {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 10px;
+            color: var(--muted);
+            margin-bottom: 5px;
+        }
+
+        .badge {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 20px;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        .badge.positive {
+            background: #0d2e1a;
+            color: var(--green);
+            border-color: #166534;
+        }
+
+        .badge.negative {
+            background: #2e0d0d;
+            color: var(--rose);
+            border-color: #991b1b;
+        }
+
+        .badge.neutral {
+            background: #2b2510;
+            color: var(--yellow);
+            border-color: #854d0e;
+        }
+
+        /* ── Video Analysis panel ── */
+        .video-id-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 8px 10px;
+            margin-bottom: 11px;
+            font-size: 11px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .video-id-box span {
+            color: var(--blue);
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        /* ── Progress bar ── */
+        .progress-wrap {
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 10px 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--red);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* ── Overall sentiment bar ── */
+        .sentiment-bar-wrap {
+            margin-top: 13px;
+            display: none;
+        }
+
+        .sentiment-bar-title {
+            font-size: 10px;
+            color: var(--muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .sentiment-bar {
+            display: flex;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            gap: 2px;
+        }
+
+        .bar-seg {
+            height: 100%;
+            transition: width 0.5s ease;
+            border-radius: 2px;
+        }
+
+        .bar-seg.pos {
+            background: var(--green);
+        }
+
+        .bar-seg.neg {
+            background: var(--rose);
+        }
+
+        .bar-seg.neu {
+            background: var(--yellow);
+        }
+
+        .bar-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 4px;
+            font-size: 9px;
+        }
+
+        .bar-labels span {
+            font-weight: 600;
+        }
+
+        .bar-labels .lp {
+            color: var(--green);
+        }
+
+        .bar-labels .ln {
+            color: var(--rose);
+        }
+
+        .bar-labels .lu {
+            color: var(--yellow);
+        }
+
+        /* ── Word cloud ── */
+        .wordcloud-wrap {
+            margin-top: 13px;
+            display: none;
+        }
+
+        .section-title {
+            font-size: 10px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 7px;
+        }
+
+        .wordcloud-img {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .wordcloud-img img {
+            width: 100%;
+            border-radius: 8px;
+            display: block;
+        }
+
+        .wordcloud-placeholder {
+            color: var(--muted);
+            font-size: 11px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* ── Top comments list ── */
+        .comments-wrap {
+            margin-top: 13px;
+            display: none;
+        }
+
+        .comment-list {
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .comment-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .comment-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        .cmt-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 7px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .cmt-item:last-child {
+            border-bottom: none;
+        }
+
+        .cmt-badge {
+            font-size: 8px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 2px 6px;
+            border-radius: 20px;
+            border: 1px solid;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .cmt-badge.positive {
+            background: #0d2e1a;
+            color: var(--green);
+            border-color: #166534;
+        }
+
+        .cmt-badge.negative {
+            background: #2e0d0d;
+            color: var(--rose);
+            border-color: #991b1b;
+        }
+
+        .cmt-badge.neutral {
+            background: #2b2510;
+            color: var(--yellow);
+            border-color: #854d0e;
+        }
+
+        .cmt-text {
+            font-size: 11px;
+            color: #ccc;
+            line-height: 1.4;
+        }
+
+        .cmt-meta {
+            font-size: 9px;
+            color: var(--muted);
+            margin-top: 2px;
+        }
+
+        /* ── Engagement score ── */
+        .engagement-wrap {
+            margin-top: 13px;
+            display: none;
+        }
+
+        .eng-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+        }
+
+        .eng-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 9px 10px;
+        }
+
+        .eng-label {
+            font-size: 9px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 4px;
+        }
+
+        .eng-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .eng-sub {
+            font-size: 9px;
+            color: var(--muted);
+            margin-top: 1px;
+        }
+
+        /* ── Trend ── */
+        .trend-wrap {
+            margin-top: 13px;
+            display: none;
+        }
+
+        .trend-bars {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 50px;
+        }
+
+        .trend-bar-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .trend-bar-inner {
+            width: 100%;
+            border-radius: 3px 3px 0 0;
+            min-height: 4px;
+            transition: height 0.5s ease;
+        }
+
+        .trend-bar-inner.pos {
+            background: var(--green);
+        }
+
+        .trend-bar-inner.neg {
+            background: var(--rose);
+        }
+
+        .trend-bar-inner.neu {
+            background: var(--yellow);
+        }
+
+        .trend-label {
+            font-size: 8px;
+            color: var(--muted);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hdr">
+        <div class="hdr-icon">🎬</div>
+        <div>
+            <div class="hdr-title">SentiTube</div>
+            <div class="hdr-sub">Comment Sentiment v2</div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab active" data-tab="label">Label Comments</button>
+        <button class="tab" data-tab="analyze">Video Analysis</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+     TAB 1 – Label visible comments
+════════════════════════════════════════════════════════════ -->
+    <div class="panel active" id="panel-label">
+        <div class="page-status" id="ps1">
+            <div class="status-dot red" id="ps1-dot"></div>
+            <span id="ps1-text">Checking page…</span>
+        </div>
+
+        <button class="btn btn-red" id="analyzeBtn" disabled>Analyze Visible Comments</button>
+        <button class="btn btn-ghost" id="clearBtn" style="display:none">Clear Labels</button>
+
+        <div class="stat-grid" id="statsBox" style="display:none">
+            <div class="stat-card pos">
+                <div class="stat-num" id="posCount">0</div>
+                <div class="stat-lbl">Positive</div>
+            </div>
+            <div class="stat-card neg">
+                <div class="stat-num" id="negCount">0</div>
+                <div class="stat-lbl">Negative</div>
+            </div>
+            <div class="stat-card neu">
+                <div class="stat-num" id="neuCount">0</div>
+                <div class="stat-lbl">Neutral</div>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-title">Sentiment labels</div>
+            <div class="legend-row"><span class="badge positive">positive</span> enthusiastic / good</div>
+            <div class="legend-row"><span class="badge negative">negative</span> critical / bad</div>
+            <div class="legend-row"><span class="badge neutral">neutral</span> factual / mixed</div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════
+     TAB 2 – Video-level analysis
+════════════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-analyze">
+        <div class="page-status" id="ps2">
+            <div class="status-dot red" id="ps2-dot"></div>
+            <span id="ps2-text">Checking page…</span>
+        </div>
+
+        <div class="video-id-box" id="videoIdBox" style="display:none">
+            🎥 Video ID: <span id="videoIdVal">—</span>
+        </div>
+
+        <button class="btn btn-red" id="fetchAnalysisBtn" disabled>Fetch Video Analysis</button>
+        <button class="btn btn-ghost" id="clearAnalysisBtn" style="display:none; margin-top:7px">Clear Results</button>
+
+        <div class="progress-wrap" id="progressWrap">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Overall sentiment % bar -->
+        <div class="sentiment-bar-wrap" id="sentBarWrap">
+            <div class="sentiment-bar-title">Overall Sentiment</div>
+            <div class="sentiment-bar">
+                <div class="bar-seg pos" id="barPos" style="width:0%"></div>
+                <div class="bar-seg neg" id="barNeg" style="width:0%"></div>
+                <div class="bar-seg neu" id="barNeu" style="width:0%"></div>
+            </div>
+            <div class="bar-labels">
+                <span class="lp" id="lblPos">0% Positive</span>
+                <span class="lu" id="lblNeu">0% Neutral</span>
+                <span class="ln" id="lblNeg">0% Negative</span>
+            </div>
+        </div>
+
+        <!-- Word cloud -->
+        <div class="wordcloud-wrap" id="wordcloudWrap">
+            <div class="section-title">Word Cloud</div>
+            <div class="wordcloud-img" id="wordcloudImg">
+                <div class="wordcloud-placeholder" id="wcPlaceholder">Word cloud will appear here</div>
+            </div>
+        </div>
+
+        <!-- Engagement metrics -->
+        <div class="engagement-wrap" id="engWrap">
+            <div class="section-title">Engagement Metrics</div>
+            <div class="eng-grid" id="engGrid"></div>
+        </div>
+
+        <!-- Sentiment trend over top comments -->
+        <div class="trend-wrap" id="trendWrap">
+            <div class="section-title">Sentiment Trend (comment order)</div>
+            <div class="trend-bars" id="trendBars"></div>
+        </div>
+
+        <!-- Top 25 comments -->
+        <div class="comments-wrap" id="commentsWrap">
+            <div class="section-title">Top 25 Comments</div>
+            <div class="comment-list" id="commentList"></div>
+        </div>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

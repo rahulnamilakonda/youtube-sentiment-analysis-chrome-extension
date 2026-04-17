@@ -1,0 +1,35 @@
+{
+  "manifest_version": 3,
+  "name": "SentiTube – Comment Sentiment",
+  "version": "2.0",
+  "description": "Label YouTube comments with sentiment. Analyze full videos with word clouds and stats.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://your-api-domain.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon.png",
+      "48": "icon.png",
+      "128": "icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "http://localhost:8000/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
