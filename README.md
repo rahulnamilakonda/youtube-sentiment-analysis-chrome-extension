@@ -345,6 +345,17 @@ extension side — the incremental batch logic handles it automatically.
 
 ---
 
+## Screenshots
+
+### Tab 1 — Comment Labeling
+![Tab 1 Labeling](images/label_1.PNG)
+
+### Tab 2 — Video Analysis
+![Tab 2 Analysis 1](images/analysis_1.PNG)
+![Tab 2 Analysis 2](images/analysis_2.PNG)
+
+---
+
 ## Installation (developer mode)
 
 1. Open `chrome://extensions`
